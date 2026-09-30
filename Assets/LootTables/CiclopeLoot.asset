@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f846e6468cc5614f91611fa67754642, type: 3}
+  m_Name: CiclopeLoot
+  m_EditorClassIdentifier: Assembly-CSharp::LootTable
+  lootEntries:
+  - itemPrefab: {fileID: 8636285530817145510, guid: 025d01c965e870c4986148557ef965ee, type: 3}
+    dropChance: 77.6
+    minAmount: 1
+    maxAmount: 5
+  - itemPrefab: {fileID: 3103095889721010616, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+    dropChance: 5
+    minAmount: 0
+    maxAmount: 1
+  - itemPrefab: {fileID: 739316359890200783, guid: 6bc27ff2605beec4a89ae3913b76ef72, type: 3}
+    dropChance: 4.6
+    minAmount: 0
+    maxAmount: 1
+  - itemPrefab: {fileID: 1843356126280632827, guid: c0e6e93d2c07e3e4c97163fa4b5edad1, type: 3}
+    dropChance: 6.4
+    minAmount: 0
+    maxAmount: 1
+  - itemPrefab: {fileID: 349348031331035931, guid: 099aad2384b6a9f488c4b7efbf021360, type: 3}
+    dropChance: 100
+    minAmount: 3
+    maxAmount: 5
+  - itemPrefab: {fileID: 6502779332061756915, guid: 4d7d4ea1ca866b640a03621bb37367c9, type: 3}
+    dropChance: 0.5
+    minAmount: 1
+    maxAmount: 0
+  - itemPrefab: {fileID: 2380908939120818323, guid: d3b76f574841fbc4e998af943d45bbde, type: 3}
+    dropChance: 2
+    minAmount: 0
+    maxAmount: 1
+  - itemPrefab: {fileID: 269225524597150554, guid: 5fe8e76d2363fb44b8285475288c5d83, type: 3}
+    dropChance: 1.7
+    minAmount: 1
+    maxAmount: 0
+  - itemPrefab: {fileID: 1411954562617856925, guid: 6de0e12a20278404896b5f059a807b69, type: 3}
+    dropChance: 1
+    minAmount: 0
+    maxAmount: 1

@@ -1,0 +1,138 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &3443366315933057699
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8788994025654646732, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: ID
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -8788994025654646732, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: itemName
+      value: Xp
+      objectReference: {fileID: 0}
+    - target: {fileID: -7061967823216432370, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 265007618, guid: 55769da95f03fed4195401bdfaf32a79, type: 3}
+    - target: {fileID: 2204091788865766629, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 265007618, guid: 55769da95f03fed4195401bdfaf32a79, type: 3}
+    - target: {fileID: 3103095889721010616, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_Name
+      value: EXP Obs Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 9.482927
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -15.124017
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5212554628648968856, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 2747647996309864352, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+    - {fileID: -8788994025654646732, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3103095889721010616, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -2469094299030410937}
+  m_SourcePrefab: {fileID: 100100000, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+--- !u!1 &349348031331035931 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3103095889721010616, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
+  m_PrefabInstance: {fileID: 3443366315933057699}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-2469094299030410937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 349348031331035931}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 165f3740ae252924fbc65b4c2e6cc8b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExperienceGem
+  xpValue: 10

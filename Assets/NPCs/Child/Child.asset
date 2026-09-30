@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1f3b72c6e4019445a5cc96d8fc3fea2, type: 3}
+  m_Name: Child
+  m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
+  npcName: Child
+  npcPortrait: {fileID: -7527145504033472756, guid: 64cb9629411cab5409c0af655663addf, type: 3}
+  dialogueLines:
+  - Hola
+  - "\xBFNecesitas algo?"
+  - "\xA1lo siento tengo mucha prisa"
+  - Me tengo que ir
+  - "\xBFEstas seguro?"
+  - ok Bye
+  autoProgressLines: 010101010101
+  endDialogueLine: 000000010001
+  autoProgressDelay: 1.5
+  tipingSpeed: 0.05
+  dialogueChoices:
+  - dialogueIndex: 1
+    dialogueChoices:
+    - si
+    - no lo se
+    nextDialogueIndex: 0200000004000000
+  - dialogueIndex: 4
+    dialogueChoices:
+    - si claro
+    - no
+    - no lo se
+    nextDialogueIndex: 020000000500000001000000
+  voiceSound: {fileID: 8300000, guid: e5904fd9dc51b504bae5f1183a074f85, type: 3}
+  voicePitch: 1

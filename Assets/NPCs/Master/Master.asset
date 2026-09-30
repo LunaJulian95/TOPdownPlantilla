@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1f3b72c6e4019445a5cc96d8fc3fea2, type: 3}
+  m_Name: Master
+  m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
+  npcName: Master
+  npcPortrait: {fileID: -7527145504033472756, guid: 81d13b2be04635442aeea267a3fc534f, type: 3}
+  dialogueLines:
+  - 'Hola joven '
+  - me puedes ayudar?
+  - Gracias
+  - 'Sabia que podia contar contigo '
+  - Ahh bueno
+  - 'tal vez la proxima '
+  autoProgressLines: 010100000101
+  endDialogueLine: 000000010001
+  autoProgressDelay: 1.5
+  tipingSpeed: 0.05
+  dialogueChoices:
+  - dialogueIndex: 1
+    dialogueChoices:
+    - Si
+    - No
+    nextDialogueIndex: 0200000004000000
+  voiceSound: {fileID: 8300000, guid: 4799e3c145fa5034c824e8501f1c82b3, type: 3}
+  voicePitch: 1
