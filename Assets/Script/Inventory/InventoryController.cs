@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryController : MonoBehaviour
@@ -37,7 +37,10 @@ public class InventoryController : MonoBehaviour
             return;
         }
         Instance = this;
+
         
+
+
     }
 
 
@@ -114,7 +117,7 @@ public class InventoryController : MonoBehaviour
 
         if (itemDictionary == null)
         {
-            Debug.LogError("ItemDictionary no est� asignado.");
+            Debug.LogError("ItemDictionary no está asignado.");
             return false;
         }
 
@@ -163,7 +166,7 @@ public class InventoryController : MonoBehaviour
         }
 
         // =====================================================
-        // 2. SI NO EXISTE, BUSCAR SLOT VAC�O
+        // 2. SI NO EXISTE, BUSCAR SLOT VACÍO
         // =====================================================
 
         foreach (Transform slotTransform in inventoryPanel.transform)
@@ -587,7 +590,7 @@ public class InventoryController : MonoBehaviour
         if (itemDictionary == null)
         {
             Debug.LogError(
-                "No se encontr� ItemDiccionary."
+                "No se encontró ItemDiccionary."
             );
 
             return null;
@@ -598,7 +601,7 @@ public class InventoryController : MonoBehaviour
         {
             Debug.LogError(
                 "InventoryController: " +
-                "equipPanel no est� asignado."
+                "equipPanel no está asignado."
             );
 
             return null;
@@ -701,5 +704,148 @@ public class InventoryController : MonoBehaviour
 
 
         return item;
+    }
+    public bool AddWorldItemByID(int id, int amount)
+    {
+        if (amount < 1)
+            amount = 1;
+
+
+        // =====================================================
+        // BUSCAR EL PREFAB ORIGINAL
+        // =====================================================
+
+        GameObject itemPrefab = null;
+
+        foreach (GameObject prefab in itemPrefabs)
+        {
+            if (prefab == null)
+                continue;
+
+            Item item = prefab.GetComponent<Item>();
+
+            if (item != null && item.ID == id)
+            {
+                itemPrefab = prefab;
+                break;
+            }
+        }
+
+        if (itemPrefab == null)
+        {
+            Debug.LogError(
+                "No se encontró prefab con ID: " + id
+            );
+
+            return false;
+        }
+
+
+        Item prefabItem = itemPrefab.GetComponent<Item>();
+
+
+        // =====================================================
+        // CONSUMIBLE → BUSCAR STACK
+        // =====================================================
+
+        if (prefabItem.itemType == Item.ItemType.Consumable)
+        {
+            foreach (Transform slotTransform in inventoryPanel.transform)
+            {
+                Slot slot =
+                    slotTransform.GetComponent<Slot>();
+
+                if (slot == null || slot.currenItem == null)
+                    continue;
+
+                Item existingItem =
+                    slot.currenItem.GetComponent<Item>();
+
+                if (existingItem == null)
+                    continue;
+
+                if (existingItem.ID == id &&
+                    existingItem.itemType == Item.ItemType.Consumable)
+                {
+                    existingItem.AddToStack(amount);
+
+                    Debug.Log(
+                        "RECIBIDO: " +
+                        prefabItem.itemName +
+                        " x" +
+                        amount +
+                        " | TOTAL: " +
+                        existingItem.quantity
+                    );
+
+                    return true;
+                }
+            }
+        }
+
+
+        // =====================================================
+        // BUSCAR SLOT VACÍO
+        // =====================================================
+
+        foreach (Transform slotTransform in inventoryPanel.transform)
+        {
+            Slot slot =
+                slotTransform.GetComponent<Slot>();
+
+            if (slot == null || slot.currenItem != null)
+                continue;
+
+
+            // Crear solamente el item del inventario.
+            GameObject newItem =
+                Instantiate(
+                    itemPrefab,
+                    slot.transform
+                );
+
+
+            RectTransform rect =
+                newItem.GetComponent<RectTransform>();
+
+            if (rect != null)
+            {
+                rect.anchoredPosition = Vector2.zero;
+                rect.localRotation = Quaternion.identity;
+                rect.localScale = Vector3.one;
+            }
+
+
+            Item newItemComponent =
+                newItem.GetComponent<Item>();
+
+            if (newItemComponent != null)
+            {
+                newItemComponent.quantity = amount;
+
+                newItemComponent.originalParent =
+                    slot.transform;
+
+                newItemComponent.UpdateQuantityDisplay();
+            }
+
+
+            slot.currenItem = newItem;
+
+
+            Debug.Log(
+                "RECIBIDO: " +
+                prefabItem.itemName +
+                " x" +
+                amount
+            );
+
+            return true;
+        }
+
+
+        Debug.Log("Inventario lleno.");
+
+        return false;
     }
 }
