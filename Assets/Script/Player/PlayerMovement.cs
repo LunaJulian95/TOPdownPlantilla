@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     bool isAttacking;
     private bool playFootStep = false;
     public float footStepSpeed = 0.5f;
+    public Player_Combat_anim player_combat;
 
 
 
@@ -44,7 +45,7 @@ public class PlayerMovement : MonoBehaviour
             animator.SetFloat("LastY", LastMoveInput.y);
         }
 
-        
+       
         
 
        

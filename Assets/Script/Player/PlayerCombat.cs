@@ -14,30 +14,33 @@ public class PlayerCombat : MonoBehaviour
     [Header("Tiempo entre ataques")]
     public float attackCooldown = 0.4f;
 
-    private float nextAttackTime = 0f;
+    [Header("Animación")]
+    public Animator animator;
 
+    private float nextAttackTime = 0f;
 
     private void Awake()
     {
-        // Daño inicial
         if (baseDamage <= 0)
         {
             baseDamage = 10;
         }
 
         damage = baseDamage;
-    }
 
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
+    }
 
     private void Update()
     {
-        // Clic izquierdo
         if (Input.GetMouseButtonDown(0))
         {
             Attack();
         }
     }
-
 
     // =====================================================
     // ATAQUE
@@ -45,13 +48,15 @@ public class PlayerCombat : MonoBehaviour
 
     private void Attack()
     {
-        // Evita atacar demasiado rápido
         if (Time.time < nextAttackTime)
             return;
 
-        nextAttackTime =
-            Time.time + attackCooldown;
+        nextAttackTime = Time.time + attackCooldown;
 
+        if (animator != null)
+        {
+            animator.SetBool("isAttacking", true);
+        }
 
         if (attackPoint == null)
         {
@@ -59,11 +64,14 @@ public class PlayerCombat : MonoBehaviour
                 "PlayerCombat: attackPoint no está asignado."
             );
 
+            if (animator != null)
+            {
+                animator.SetBool("isAttacking", false);
+            }
+
             return;
         }
 
-
-        // Busca enemigos dentro del círculo
         Collider2D[] hitEnemies =
             Physics2D.OverlapCircleAll(
                 attackPoint.position,
@@ -71,21 +79,10 @@ public class PlayerCombat : MonoBehaviour
                 enemyLayer
             );
 
-
-        // Si no encontró enemigos
-        if (hitEnemies.Length == 0)
-        {
-            Debug.Log("No golpeaste a ningún enemigo.");
-            return;
-        }
-
-
-        // Daño a los enemigos encontrados
         foreach (Collider2D enemy in hitEnemies)
         {
             Health enemyHealth =
                 enemy.GetComponent<Health>();
-
 
             if (enemyHealth != null)
             {
@@ -101,6 +98,17 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
+    // =====================================================
+    // TERMINAR ANIMACIÓN
+    // =====================================================
+
+    public void FinishAttacking()
+    {
+        if (animator != null)
+        {
+            animator.SetBool("isAttacking", false);
+        }
+    }
 
     // =====================================================
     // ACTUALIZAR DAÑO
@@ -108,11 +116,8 @@ public class PlayerCombat : MonoBehaviour
 
     public void UpdateDamage(int totalBonus)
     {
-        damage =
-            baseDamage +
-            totalBonus;
+        damage = baseDamage + totalBonus;
     }
-
 
     // =====================================================
     // DAÑO POR SUBIR DE NIVEL
@@ -127,8 +132,6 @@ public class PlayerCombat : MonoBehaviour
             baseDamage
         );
 
-
-        // Recalcular daño incluyendo equipamiento
         if (EquipmentManager.Instance != null)
         {
             EquipmentManager.Instance.RecalculateDamage();
@@ -139,9 +142,8 @@ public class PlayerCombat : MonoBehaviour
         }
     }
 
-
     // =====================================================
-    // VER RANGO DE ATAQUE EN LA SCENE
+    // GIZMO
     // =====================================================
 
     private void OnDrawGizmosSelected()

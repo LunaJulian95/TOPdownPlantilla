@@ -21,6 +21,8 @@ public class SaveData
     public List<InvetorySaveData> inventoryData;
 
 
+    public int coins;
+
     // =====================================================
     // HOTBAR
     // =====================================================

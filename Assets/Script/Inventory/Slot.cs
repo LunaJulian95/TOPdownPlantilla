@@ -1,47 +1,168 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Slot : MonoBehaviour, IDropHandler
+public class Slot : MonoBehaviour, IPointerClickHandler
 {
     public GameObject currenItem;
 
-    public void OnDrop(PointerEventData eventData)
+
+    // ==================================================
+    // CLICK
+    // ==================================================
+
+    public void OnPointerClick(PointerEventData eventData)
     {
-        Item draggedItem = eventData.pointerDrag?.GetComponent<Item>();
-        if (draggedItem == null) return;
+        // Solo clic izquierdo
+        if (eventData.button != PointerEventData.InputButton.Left)
+            return;
 
-        // Si este slot ya está ocupado, no dejar soltar
-        if (currenItem != null && currenItem != draggedItem.gameObject) return;
+        // No hay objeto
+        if (currenItem == null)
+            return;
 
-        // Limpiar el slot viejo
-        if (draggedItem.originalParent != null)
-        {
-            Slot oldSlot = draggedItem.originalParent.GetComponent<Slot>();
-            if (oldSlot != null) oldSlot.currenItem = null;
-        }
+        // Solo se puede desequipar desde equipamiento
+        if (!IsEquipmentSlot())
+            return;
 
-        // Mover al nuevo slot
-        draggedItem.originalParent = transform;
-        draggedItem.transform.SetParent(transform);
-        draggedItem.GetComponent<RectTransform>().anchoredPosition = Vector2.zero;
-        currenItem = draggedItem.gameObject;
+        UnequipCurrentItem();
     }
 
-    void Update()
+
+    // ==================================================
+    // DESEQUIPAR
+    // ==================================================
+
+    private void UnequipCurrentItem()
     {
-        // FIX DEL CLON: si el objeto fue destruido, limpia la referencia
-        if (currenItem != null && currenItem.Equals(null))
+        Item item = currenItem.GetComponent<Item>();
+
+        if (item == null)
         {
-            currenItem = null;
+            Debug.LogWarning(
+                "Slot: el objeto equipado no tiene componente Item."
+            );
+            return;
         }
-        if (transform.childCount == 0)
+
+        if (InventoryController.Instance == null)
         {
-            currenItem = null;
+            Debug.LogWarning(
+                "Slot: no existe InventoryController."
+            );
+            return;
         }
-        else if (currenItem == null && transform.childCount > 0)
+
+        if (EquipmentManager.Instance == null)
         {
-            // si hay un hijo pero no está registrado, lo registra
-            currenItem = transform.GetChild(0).gameObject;
+            Debug.LogWarning(
+                "Slot: no existe EquipmentManager."
+            );
+            return;
         }
+
+
+        // Buscar panel de inventario
+        GameObject inventoryPanel =
+            InventoryController.Instance.inventoryPanel;
+
+        if (inventoryPanel == null)
+        {
+            Debug.LogWarning(
+                "Slot: inventoryPanel no está asignado."
+            );
+            return;
+        }
+
+
+        // ==================================================
+        // BUSCAR SLOT LIBRE
+        // ==================================================
+
+        Slot freeSlot = null;
+
+        foreach (Transform child in inventoryPanel.transform)
+        {
+            Slot slot = child.GetComponent<Slot>();
+
+            if (slot != null && slot.currenItem == null)
+            {
+                freeSlot = slot;
+                break;
+            }
+        }
+
+
+        // No hay espacio
+        if (freeSlot == null)
+        {
+            Debug.Log(
+                "No hay espacio en el inventario para desequipar."
+            );
+
+            return;
+        }
+
+
+        // ==================================================
+        // QUITAR EQUIPAMIENTO
+        // ==================================================
+
+        EquipmentManager.Instance.Unequip(item);
+
+
+        // Limpiar slot de equipamiento
+        currenItem = null;
+
+
+        // ==================================================
+        // MOVER AL INVENTARIO
+        // ==================================================
+
+        item.originalParent = freeSlot.transform;
+
+        item.transform.SetParent(
+            freeSlot.transform,
+            false
+        );
+
+
+        // ==================================================
+        // POSICIÓN Y ESCALA
+        // ==================================================
+
+        RectTransform rect =
+            item.GetComponent<RectTransform>();
+
+        if (rect != null)
+        {
+            rect.anchoredPosition = Vector2.zero;
+            rect.localPosition = Vector3.zero;
+            rect.localScale = Vector3.one;
+        }
+
+
+        // ==================================================
+        // REGISTRAR EN EL SLOT
+        // ==================================================
+
+        freeSlot.currenItem = item.gameObject;
+    }
+
+
+    // ==================================================
+    // SABER SI ES SLOT DE EQUIPAMIENTO
+    // ==================================================
+
+    private bool IsEquipmentSlot()
+    {
+        if (InventoryController.Instance == null)
+            return false;
+
+        if (InventoryController.Instance.equipPanel == null)
+            return false;
+
+        return transform.IsChildOf(
+            InventoryController.Instance.equipPanel.transform
+        );
     }
 }

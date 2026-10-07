@@ -1,5 +1,4 @@
 using System.IO;
-using NUnit.Framework;
 using Unity.Cinemachine;
 using UnityEngine;
 using System.Collections.Generic;
@@ -40,36 +39,17 @@ public class SaveController : MonoBehaviour
                 "saveData.json"
             );
 
-
-        Debug.Log(
-            "ARCHIVO DE GUARDADO: " +
-            saveLocation
-        );
-
-
         inventoryController =
-            FindAnyObjectByType<
-                InventoryController
-            >();
-
+            FindAnyObjectByType<InventoryController>();
 
         hotbarController =
-            FindAnyObjectByType<
-                HotBarController
-            >();
-
+            FindAnyObjectByType<HotBarController>();
 
         playerLevel =
-            FindAnyObjectByType<
-                PlayerLevel
-            >();
-
+            FindAnyObjectByType<PlayerLevel>();
 
         equipmentManager =
-            FindAnyObjectByType<
-                EquipmentManager
-            >();
-
+            FindAnyObjectByType<EquipmentManager>();
 
         chests =
             FindObjectsByType<Chest>(
@@ -92,13 +72,8 @@ public class SaveController : MonoBehaviour
         GameObject player =
             GameObject.FindWithTag("Player");
 
-
         if (player == null)
         {
-            Debug.LogError(
-                "NO SE ENCONTRÓ EL PLAYER."
-            );
-
             return;
         }
 
@@ -110,27 +85,16 @@ public class SaveController : MonoBehaviour
         Health health =
             player.GetComponent<Health>();
 
-
         PlayerCombat combat =
             player.GetComponent<PlayerCombat>();
 
-
         if (health == null)
         {
-            Debug.LogError(
-                "El Player no tiene componente Health."
-            );
-
             return;
         }
 
-
         if (combat == null)
         {
-            Debug.LogError(
-                "El Player no tiene componente PlayerCombat."
-            );
-
             return;
         }
 
@@ -142,36 +106,25 @@ public class SaveController : MonoBehaviour
         if (inventoryController == null)
         {
             inventoryController =
-                FindAnyObjectByType<
-                    InventoryController
-                >();
+                FindAnyObjectByType<InventoryController>();
         }
-
 
         if (hotbarController == null)
         {
             hotbarController =
-                FindAnyObjectByType<
-                    HotBarController
-                >();
+                FindAnyObjectByType<HotBarController>();
         }
-
 
         if (playerLevel == null)
         {
             playerLevel =
-                FindAnyObjectByType<
-                    PlayerLevel
-                >();
+                FindAnyObjectByType<PlayerLevel>();
         }
-
 
         if (equipmentManager == null)
         {
             equipmentManager =
-                FindAnyObjectByType<
-                    EquipmentManager
-                >();
+                FindAnyObjectByType<EquipmentManager>();
         }
 
 
@@ -181,30 +134,16 @@ public class SaveController : MonoBehaviour
 
         if (inventoryController == null)
         {
-            Debug.LogError(
-                "NO SE ENCONTRÓ InventoryController."
-            );
-
             return;
         }
-
 
         if (hotbarController == null)
         {
-            Debug.LogError(
-                "NO SE ENCONTRÓ HotBarController."
-            );
-
             return;
         }
 
-
         if (playerLevel == null)
         {
-            Debug.LogError(
-                "NO SE ENCONTRÓ PlayerLevel."
-            );
-
             return;
         }
 
@@ -214,25 +153,10 @@ public class SaveController : MonoBehaviour
         // -----------------------------------------------------
 
         var inventoryItems =
-            inventoryController
-            .GetInventoryItems();
-
+            inventoryController.GetInventoryItems();
 
         var hotbarItems =
-            hotbarController
-            .GetHotBarItems();
-
-
-        Debug.Log(
-            "Items inventario encontrados: " +
-            inventoryItems.Count
-        );
-
-
-        Debug.Log(
-            "Items hotbar encontrados: " +
-            hotbarItems.Count
-        );
+            hotbarController.GetHotBarItems();
 
 
         // -----------------------------------------------------
@@ -257,7 +181,6 @@ public class SaveController : MonoBehaviour
                 .equipPanel
                 .transform;
 
-
             for (int i = 0;
                  i < equipPanel.childCount;
                  i++)
@@ -267,21 +190,20 @@ public class SaveController : MonoBehaviour
                     .GetChild(i)
                     .GetComponent<Slot>();
 
-
                 if (slot == null ||
                     slot.currenItem == null)
                 {
                     continue;
                 }
 
-
                 Item item =
                     slot.currenItem
                     .GetComponent<Item>();
 
-
                 if (item == null)
+                {
                     continue;
+                }
 
 
                 // -------------------------------------------------
@@ -331,36 +253,16 @@ public class SaveController : MonoBehaviour
         }
 
 
-        Debug.Log(
-            "Arma equipada ID: " +
-            equippedWeaponID
-        );
-
-
-        Debug.Log(
-            "Armadura equipada ID: " +
-            equippedArmorID
-        );
-
-
-        Debug.Log(
-            "Escudo equipado ID: " +
-            equippedShieldID
-        );
-
-
         // -----------------------------------------------------
         // ÁREA DEL MAPA
         // -----------------------------------------------------
 
         string mapBoundary = "";
 
-
         CinemachineConfiner2D confiner =
             FindAnyObjectByType<
                 CinemachineConfiner2D
             >();
-
 
         if (confiner != null &&
             confiner.BoundingShape2D != null)
@@ -384,51 +286,47 @@ public class SaveController : MonoBehaviour
                 playerPosition =
                     player.transform.position,
 
-
                 // Mapa
                 mapBoundary =
                     mapBoundary,
-
 
                 // Inventario
                 inventoryData =
                     inventoryItems,
 
-
                 // Hotbar
                 hotbarSaveData =
                     hotbarItems,
-
 
                 // Nivel
                 playerLevel =
                     playerLevel.level,
 
-
                 // XP
                 playerXP =
                     playerLevel.currentXP,
-
 
                 // XP necesaria
                 playerXPToNextLevel =
                     playerLevel.xpToNextLevel,
 
-
                 // Vida máxima
                 playerMaxHealth =
                     health.maxHealth,
-
 
                 // Vida actual
                 playerCurrentHealth =
                     health.currentHealth,
 
-
                 // Daño
                 playerDamage =
                     combat.damage,
 
+                // Coins
+                coins =
+                    GameManager.Instance != null
+                    ? GameManager.Instance.coins
+                    : 0,
 
                 // -------------------------------------------------
                 // EQUIPAMIENTO
@@ -452,7 +350,6 @@ public class SaveController : MonoBehaviour
                 equippedShieldSlot =
                     equippedShieldSlot,
 
-
                 // Cofres
                 chestSaveData =
                     GetChestsState()
@@ -469,99 +366,9 @@ public class SaveController : MonoBehaviour
                 true
             );
 
-
         File.WriteAllText(
             saveLocation,
             json
-        );
-
-
-        // -----------------------------------------------------
-        // INFORMACIÓN
-        // -----------------------------------------------------
-
-        Debug.Log(
-            "=============================="
-        );
-
-
-        Debug.Log(
-            "=== PARTIDA GUARDADA ==="
-        );
-
-
-        Debug.Log(
-            "Nivel: " +
-            data.playerLevel
-        );
-
-
-        Debug.Log(
-            "XP: " +
-            data.playerXP +
-            "/" +
-            data.playerXPToNextLevel
-        );
-
-
-        Debug.Log(
-            "Vida: " +
-            data.playerCurrentHealth +
-            "/" +
-            data.playerMaxHealth
-        );
-
-
-        Debug.Log(
-            "Daño: " +
-            data.playerDamage
-        );
-
-
-        Debug.Log(
-            "Items inventario: " +
-            data.inventoryData.Count
-        );
-
-
-        Debug.Log(
-            "Items hotbar: " +
-            data.hotbarSaveData.Count
-        );
-
-
-        Debug.Log(
-            "Arma equipada: ID " +
-            data.equippedWeaponID
-        );
-
-
-        Debug.Log(
-            "Armadura equipada: ID " +
-            data.equippedArmorID
-        );
-
-
-        Debug.Log(
-            "Escudo equipado: ID " +
-            data.equippedShieldID
-        );
-
-
-        Debug.Log(
-            "Área: " +
-            data.mapBoundary
-        );
-
-
-        Debug.Log(
-            "Archivo: " +
-            saveLocation
-        );
-
-
-        Debug.Log(
-            "=============================="
         );
     }
 
@@ -575,10 +382,10 @@ public class SaveController : MonoBehaviour
         List<ChestSaveData> chestsSaveData =
             new List<ChestSaveData>();
 
-
         if (chests == null)
+        {
             return chestsSaveData;
-
+        }
 
         foreach (Chest chest in chests)
         {
@@ -592,12 +399,10 @@ public class SaveController : MonoBehaviour
                         chest.IsOpened
                 };
 
-
             chestsSaveData.Add(
                 chestSaveData
             );
         }
-
 
         return chestsSaveData;
     }
@@ -612,27 +417,8 @@ public class SaveController : MonoBehaviour
     {
         if (!File.Exists(saveLocation))
         {
-            Debug.Log(
-                "No existe partida guardada."
-            );
-
             return;
         }
-
-
-        Debug.Log(
-            "=============================="
-        );
-
-
-        Debug.Log(
-            "=== CARGANDO PARTIDA ==="
-        );
-
-
-        Debug.Log(
-            "=============================="
-        );
 
 
         // -----------------------------------------------------
@@ -644,19 +430,13 @@ public class SaveController : MonoBehaviour
                 saveLocation
             );
 
-
         SaveData data =
             JsonUtility.FromJson<SaveData>(
                 json
             );
 
-
         if (data == null)
         {
-            Debug.LogError(
-                "No se pudo cargar SaveData."
-            );
-
             return;
         }
 
@@ -667,7 +447,6 @@ public class SaveController : MonoBehaviour
 
         GameObject player =
             GameObject.FindWithTag("Player");
-
 
         if (player != null)
         {
@@ -688,7 +467,6 @@ public class SaveController : MonoBehaviour
                     data.mapBoundary
                 );
 
-
             if (areaObject != null)
             {
                 PolygonCollider2D mapBoundary =
@@ -696,12 +474,10 @@ public class SaveController : MonoBehaviour
                         PolygonCollider2D
                     >();
 
-
                 CinemachineConfiner2D confiner =
                     FindAnyObjectByType<
                         CinemachineConfiner2D
                     >();
-
 
                 if (confiner != null &&
                     mapBoundary != null)
@@ -710,14 +486,12 @@ public class SaveController : MonoBehaviour
                         mapBoundary;
                 }
 
-
                 if (MapControllerDynamic.Instance != null)
                 {
                     MapControllerDynamic.Instance
                         .GenerateMap(
                             mapBoundary
                         );
-
 
                     if (SoundMusicManager.Instance != null)
                     {
@@ -752,12 +526,6 @@ public class SaveController : MonoBehaviour
                 .SetInventoryItems(
                     data.inventoryData
                 );
-
-
-            Debug.Log(
-                "Inventario cargado: " +
-                data.inventoryData.Count
-            );
         }
 
 
@@ -784,12 +552,6 @@ public class SaveController : MonoBehaviour
                 .SetHotBarItems(
                     data.hotbarSaveData
                 );
-
-
-            Debug.Log(
-                "Hotbar cargada: " +
-                data.hotbarSaveData.Count
-            );
         }
 
 
@@ -802,16 +564,31 @@ public class SaveController : MonoBehaviour
             playerLevel.level =
                 data.playerLevel;
 
-
             playerLevel.currentXP =
                 data.playerXP;
-
 
             playerLevel.xpToNextLevel =
                 data.playerXPToNextLevel;
 
-
             playerLevel.UpdateUI();
+        }
+
+
+        // -----------------------------------------------------
+        // COINS
+        // -----------------------------------------------------
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.coins =
+                data.coins;
+
+            if (GameManager.Instance.coinsText != null)
+            {
+                GameManager.Instance.coinsText.text =
+                    "Monedas: " +
+                    GameManager.Instance.coins;
+            }
         }
 
 
@@ -831,57 +608,24 @@ public class SaveController : MonoBehaviour
             Health health =
                 player.GetComponent<Health>();
 
-
             PlayerCombat combat =
                 player.GetComponent<PlayerCombat>();
-
 
             if (health != null)
             {
                 health.maxHealth =
                     data.playerMaxHealth;
 
-
                 health.currentHealth =
                     data.playerCurrentHealth;
-
-
-                Debug.Log(
-                    "Vida cargada: " +
-                    health.currentHealth +
-                    "/" +
-                    health.maxHealth
-                );
             }
-
 
             if (combat != null)
             {
                 combat.damage =
                     data.playerDamage;
-
-
-                Debug.Log(
-                    "Daño cargado: " +
-                    combat.damage
-                );
             }
         }
-
-
-        Debug.Log(
-            "=============================="
-        );
-
-
-        Debug.Log(
-            "=== PARTIDA CARGADA ==="
-        );
-
-
-        Debug.Log(
-            "=============================="
-        );
     }
 
 
@@ -900,7 +644,6 @@ public class SaveController : MonoBehaviour
                 >();
         }
 
-
         if (inventoryController == null)
         {
             inventoryController =
@@ -909,23 +652,13 @@ public class SaveController : MonoBehaviour
                 >();
         }
 
-
         if (equipmentManager == null)
         {
-            Debug.LogWarning(
-                "No se encontró EquipmentManager."
-            );
-
             return;
         }
 
-
         if (inventoryController == null)
         {
-            Debug.LogWarning(
-                "No se encontró InventoryController."
-            );
-
             return;
         }
 
@@ -937,10 +670,8 @@ public class SaveController : MonoBehaviour
         equipmentManager.currentWeapon =
             null;
 
-
         equipmentManager.currentArmor =
             null;
-
 
         equipmentManager.currentShield =
             null;
@@ -968,12 +699,10 @@ public class SaveController : MonoBehaviour
                     data.equippedWeaponSlot
                 );
 
-
             if (weapon != null)
             {
                 Item item =
                     weapon.GetComponent<Item>();
-
 
                 if (item != null)
                 {
@@ -999,12 +728,10 @@ public class SaveController : MonoBehaviour
                     data.equippedArmorSlot
                 );
 
-
             if (armor != null)
             {
                 Item item =
                     armor.GetComponent<Item>();
-
 
                 if (item != null)
                 {
@@ -1030,12 +757,10 @@ public class SaveController : MonoBehaviour
                     data.equippedShieldSlot
                 );
 
-
             if (shield != null)
             {
                 Item item =
                     shield.GetComponent<Item>();
-
 
                 if (item != null)
                 {
@@ -1045,33 +770,6 @@ public class SaveController : MonoBehaviour
                 }
             }
         }
-
-
-        // -----------------------------------------------------
-        // INFORMACIÓN
-        // -----------------------------------------------------
-
-        Debug.Log(
-            "=== EQUIPAMIENTO CARGADO ==="
-        );
-
-
-        Debug.Log(
-            "Arma ID: " +
-            data.equippedWeaponID
-        );
-
-
-        Debug.Log(
-            "Armadura ID: " +
-            data.equippedArmorID
-        );
-
-
-        Debug.Log(
-            "Escudo ID: " +
-            data.equippedShieldID
-        );
     }
 
 
@@ -1083,12 +781,14 @@ public class SaveController : MonoBehaviour
         List<ChestSaveData> chestsSaveData)
     {
         if (chestsSaveData == null)
+        {
             return;
-
+        }
 
         if (chests == null)
+        {
             return;
-
+        }
 
         foreach (Chest chest in chests)
         {
@@ -1098,7 +798,6 @@ public class SaveController : MonoBehaviour
                         c.chestID ==
                         chest.ChestID
                 );
-
 
             if (chestSaveData != null)
             {
