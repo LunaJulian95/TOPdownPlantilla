@@ -19,14 +19,14 @@ public class TabController : MonoBehaviour
     /// <param name="tabNumber">Identificador de la pestaña de 0 a 3</param>
     public void OnClickTab( int tabNumber) 
     {
-        for (int i = 0; i <this.tabImages.Length; i++)
+        for (int i = 0; i <this.pages.Length; i++)
         {
-            this.tabImages[i].color = (i  == tabNumber) ? Color.white : Color.gray;
-            this.pages[i].SetActive(false);
+            tabImages[i].color = (i  == tabNumber) ? Color.white : Color.gray;
+            pages[i].SetActive(false);
 
         }
-        this.tabImages[tabNumber].color = Color.white;
-        this.pages[tabNumber].SetActive(true);
+        tabImages[tabNumber].color = Color.white;
+        pages[tabNumber].SetActive(true);
     }
 
   
