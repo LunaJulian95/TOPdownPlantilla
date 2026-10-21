@@ -23,7 +23,9 @@ public class InventoryController : MonoBehaviour
 
     private ItemDiccionary itemDictionary;
 
-    
+    public bool IsInitialized { get; private set; }
+
+
 
     // =========================================================
     // AWAKE
@@ -55,8 +57,9 @@ public class InventoryController : MonoBehaviour
 
         CreateInventorySlots();
         CreateEquipSlots();
-    }
 
+        IsInitialized = true;
+    }
 
     // =========================================================
     // CREAR SLOTS DEL INVENTARIO
@@ -848,4 +851,6 @@ public class InventoryController : MonoBehaviour
 
         return false;
     }
+
+
 }

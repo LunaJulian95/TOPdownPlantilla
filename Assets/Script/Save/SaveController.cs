@@ -2,6 +2,7 @@ using System.IO;
 using Unity.Cinemachine;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 
 public class SaveController : MonoBehaviour
@@ -19,9 +20,12 @@ public class SaveController : MonoBehaviour
     // START
     // =========================================================
 
-    void Start()
+    IEnumerator Start()
     {
         InitializeComponents();
+
+        // Espera a que los demás Start() creen los slots.
+        yield return null;
 
         LoadGame();
     }
