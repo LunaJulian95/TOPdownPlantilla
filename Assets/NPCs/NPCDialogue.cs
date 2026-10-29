@@ -18,6 +18,10 @@ public class NPCDialogue : ScriptableObject
     [Header("Dialogue Choices")]
     public DialogueChoice[] dialogueChoices;
 
+    public int questInProgressIndex;
+    public int questCompletedIndex;
+    public Quest quest;
+
     [Header("Audio Setting")]
     public AudioClip voiceSound;
     public float voicePitch = 1f;
@@ -45,4 +49,6 @@ public class DialogueChoice
     public int[] nextDialogueIndex;
 
     public ChoiceType[] choiceTypes;
+
+    public bool[] givesQuest;// elige una opcion de mision
 }

@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1f3b72c6e4019445a5cc96d8fc3fea2, type: 3}
+  m_Name: Boy
+  m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
+  npcName: Boy
+  npcPortrait: {fileID: -7527145504033472756, guid: c2a9c17a10e450f4e9c824106344003c, type: 3}
+  dialogueLines:
+  - Ten cuidado ahi fuera
+  autoProgressLines: 
+  endDialogueLine: 
+  autoProgressDelay: 1.5
+  tipingSpeed: 0.05
+  dialogueChoices: []
+  questInProgressIndex: 0
+  questCompletedIndex: 0
+  quest: {fileID: 0}
+  voiceSound: {fileID: 8300000, guid: 0932b14ab219c5b4b9ef1a4a05f075b4, type: 3}
+  voicePitch: 1

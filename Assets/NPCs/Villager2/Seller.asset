@@ -16,9 +16,14 @@ MonoBehaviour:
   npcPortrait: {fileID: -7527145504033472756, guid: 5a79d891cf38bd249b9cfad58d433a5b, type: 3}
   dialogueLines:
   - hola!
-  - quieres comprar algo o vender?
+  - Estoy comprando mis cosas
   autoProgressLines: 0100
+  endDialogueLine: 
   autoProgressDelay: 1.5
   tipingSpeed: 0.05
+  dialogueChoices: []
+  questInProgressIndex: 0
+  questCompletedIndex: 0
+  quest: {fileID: 0}
   voiceSound: {fileID: 8300000, guid: 5014e01cfec4d8d48bbb0c3a47392e79, type: 3}
   voicePitch: 1

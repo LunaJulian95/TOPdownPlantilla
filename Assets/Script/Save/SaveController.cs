@@ -1,9 +1,11 @@
-using System.IO;
-using Unity.Cinemachine;
-using UnityEngine;
-using System.Collections.Generic;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using Unity.Cinemachine;
+using UnityEditor.Overlays;
+using UnityEngine;
+using static Quest;
 
 public class SaveController : MonoBehaviour
 {
@@ -356,7 +358,13 @@ public class SaveController : MonoBehaviour
 
                 // Cofres
                 chestSaveData =
-                    GetChestsState()
+                    GetChestsState(),
+                questProgressData =
+              QuestController.Instance != null
+            ? QuestController.Instance.GetQuestProgressForSave()
+            : new List<QuestProgressSaveData>() 
+
+
             };
 
 
@@ -532,6 +540,10 @@ public class SaveController : MonoBehaviour
                 );
         }
 
+        
+
+
+
 
         // -----------------------------------------------------
         // COFRES
@@ -544,6 +556,16 @@ public class SaveController : MonoBehaviour
             );
         }
 
+        //Quest load
+
+
+        if (QuestController.Instance != null &&
+    data.questProgressData != null)
+        {
+            QuestController.Instance.LoadQuestProgress(
+                data.questProgressData
+            );
+        }
 
         // -----------------------------------------------------
         // HOTBAR
@@ -631,6 +653,7 @@ public class SaveController : MonoBehaviour
             }
         }
     }
+
 
 
     // =========================================================
@@ -777,6 +800,8 @@ public class SaveController : MonoBehaviour
     }
 
 
+
+
     // =========================================================
     // CARGAR ESTADO DE COFRES
     // =========================================================
@@ -810,5 +835,8 @@ public class SaveController : MonoBehaviour
                 );
             }
         }
+
     }
+
+   
 }

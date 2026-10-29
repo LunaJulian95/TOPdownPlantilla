@@ -532,7 +532,12 @@ public class ItemDragHandler :
 
         // Eliminar el objeto de UI
         Destroy(gameObject);
+
+
+        InventoryController.Instance.RebuildItemCount();
     }
+
+    
 
     // =========================================================
     // INVENTARIO

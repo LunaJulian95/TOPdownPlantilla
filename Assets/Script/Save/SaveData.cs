@@ -1,73 +1,50 @@
+
 using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
 public class SaveData
 {
-    // =====================================================
-    // PLAYER
-    // =====================================================
-
     public Vector3 playerPosition;
-
-    // Área actual del mapa
     public string mapBoundary;
 
-
-    // =====================================================
-    // INVENTARIO
-    // =====================================================
-
     public List<InvetorySaveData> inventoryData;
-
-
     public int coins;
-
-    // =====================================================
-    // HOTBAR
-    // =====================================================
-
     public List<InvetorySaveData> hotbarSaveData;
-
-
-    // =====================================================
-    // COFRES
-    // =====================================================
-
     public List<ChestSaveData> chestSaveData;
 
-
-    // =====================================================
-    // NIVEL Y EXPERIENCIA
-    // =====================================================
+    // Progreso de las misiones.
+    public List<QuestProgressSaveData> questProgressData;
 
     public int playerLevel;
     public int playerXP;
     public int playerXPToNextLevel;
 
-
-    // =====================================================
-    // VIDA Y DAÑO
-    // =====================================================
-
     public int playerMaxHealth;
     public int playerCurrentHealth;
     public int playerDamage;
 
-
-    // =====================================================
-    // EQUIPAMIENTO
-    // =====================================================
-
-    // Arma
     public int equippedWeaponID = -1;
     public int equippedWeaponSlot = -1;
 
-    // Armadura
     public int equippedArmorID = -1;
     public int equippedArmorSlot = -1;
 
-    // Escudo
     public int equippedShieldID = -1;
     public int equippedShieldSlot = -1;
+}
+
+[System.Serializable]
+public class QuestProgressSaveData
+{
+    public string questID;
+    public List<QuestObjectiveSaveData> objectives =
+        new List<QuestObjectiveSaveData>();
+}
+
+[System.Serializable]
+public class QuestObjectiveSaveData
+{
+    public string objectiveID;
+    public int currentAmount;
 }

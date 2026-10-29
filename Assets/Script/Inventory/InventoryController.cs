@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryController : MonoBehaviour
 {
     public static InventoryController Instance { get; private set; }
+    Dictionary<int, int> itemCountCache = new();
+    public event Action OnInventoryChanged;
 
     [Header("Paneles")]
     public GameObject inventoryPanel;
@@ -54,12 +57,39 @@ public class InventoryController : MonoBehaviour
     {
         itemDictionary =
             FindAnyObjectByType<ItemDiccionary>();
+        RebuildItemCount();
 
         CreateInventorySlots();
         CreateEquipSlots();
 
         IsInitialized = true;
     }
+
+
+
+    public void RebuildItemCount()
+    {
+        itemCountCache.Clear();
+
+        foreach (Transform slotTransform in inventoryPanel.transform)
+        {
+            Slot slot = slotTransform.GetComponent<Slot>();
+            if(slot.currenItem != null)
+            {
+                Item item = slot.currenItem.GetComponent<Item>();
+                if(item != null)
+                {
+                    itemCountCache[item.ID] = itemCountCache.GetValueOrDefault(item.ID,0) + item.quantity;
+                }
+            }
+        }
+
+        OnInventoryChanged?.Invoke();
+    }
+
+
+
+    public Dictionary<int, int > GetItemCount() =>itemCountCache;
 
     // =========================================================
     // CREAR SLOTS DEL INVENTARIO
@@ -111,6 +141,8 @@ public class InventoryController : MonoBehaviour
     // AGREGAR ITEM AL INVENTARIO
     // =========================================================
 
+
+
     public bool AddItemByID(int id)
     {
         if (itemDictionary == null)
@@ -136,14 +168,13 @@ public class InventoryController : MonoBehaviour
 
         if (prefabItem == null)
         {
-            Debug.LogError("El prefab no tiene componente Item: " + originalPrefab.name);
+            Debug.LogError(
+                "El prefab no tiene componente Item: " + originalPrefab.name
+            );
             return false;
         }
 
-        // =====================================================
-        // 1. BUSCAR SI YA EXISTE EL MISMO ITEM
-        // =====================================================
-
+        // 1. Buscar si ya existe el mismo item.
         foreach (Transform slotTransform in inventoryPanel.transform)
         {
             Slot slot = slotTransform.GetComponent<Slot>();
@@ -158,71 +189,64 @@ public class InventoryController : MonoBehaviour
                 existingItem.AddToStack(1);
 
                 Debug.Log(
-                    "Item apilado: " +
-                    existingItem.itemName +
-                    " | Cantidad: " +
-                    existingItem.quantity
+                    "Item apilado: " + existingItem.itemName +
+                    " | ID: " + existingItem.ID +
+                    " | Cantidad: " + existingItem.quantity
                 );
 
+                RebuildItemCount();
                 return true;
             }
         }
 
-        // =====================================================
-        // 2. SI NO EXISTE, BUSCAR SLOT VACÍO
-        // =====================================================
-
+        // 2. Buscar un slot vacío.
         foreach (Transform slotTransform in inventoryPanel.transform)
         {
             Slot slot = slotTransform.GetComponent<Slot>();
 
-            if (slot != null && slot.currenItem == null)
+            if (slot == null || slot.currenItem != null)
+                continue;
+
+            GameObject newItem = Instantiate(originalPrefab, slot.transform);
+
+            RectTransform rect = newItem.GetComponent<RectTransform>();
+
+            if (rect != null)
             {
-                GameObject newItem =
-                    Instantiate(originalPrefab, slot.transform);
-
-                RectTransform rect =
-                    newItem.GetComponent<RectTransform>();
-
-                if (rect != null)
-                {
-                    rect.anchoredPosition = Vector2.zero;
-                    rect.localPosition = Vector3.zero;
-                    rect.localRotation = Quaternion.identity;
-                    rect.localScale = Vector3.one;
-                }
-
-                Item newItemComponent =
-                    newItem.GetComponent<Item>();
-
-                if (newItemComponent != null)
-                {
-                    // Un item nuevo empieza con 1
-                    newItemComponent.quantity = 1;
-
-                    // MUY IMPORTANTE para Drag & Drop
-                    newItemComponent.originalParent = slot.transform;
-
-                    newItemComponent.UpdateQuantityDisplay();
-                }
-
-                slot.currenItem = newItem;
-
-                newItem.name = originalPrefab.name;
-
-                Debug.Log(
-                    "Item agregado al inventario: " +
-                    newItem.name
-                );
-
-                return true;
+                rect.anchoredPosition = Vector2.zero;
+                rect.localPosition = Vector3.zero;
+                rect.localRotation = Quaternion.identity;
+                rect.localScale = Vector3.one;
             }
+
+            Item newItemComponent = newItem.GetComponent<Item>();
+
+            if (newItemComponent != null)
+            {
+                newItemComponent.quantity = 1;
+                newItemComponent.originalParent = slot.transform;
+                newItemComponent.UpdateQuantityDisplay();
+            }
+
+            slot.currenItem = newItem;
+            newItem.name = originalPrefab.name;
+
+            Debug.Log(
+                "Item agregado: " + newItem.name +
+                " | ID: " + id +
+                " | Cantidad: 1"
+            );
+
+            // IMPORTANTE: actualizar el contador y notificar a las quests.
+            RebuildItemCount();
+
+            return true;
         }
 
-        Debug.Log("Inventario lleno.");
-
+        Debug.LogWarning("Inventario lleno.");
         return false;
     }
+
 
 
     // =========================================================
@@ -249,6 +273,7 @@ public class InventoryController : MonoBehaviour
                 if(slotItem != null && slotItem.ID == itemToAdd.ID)
                 {
                     slotItem.AddToStack(itemToAdd.quantity);
+                    RebuildItemCount();
                     
                     return true;
                 }
@@ -538,6 +563,7 @@ public class InventoryController : MonoBehaviour
                 item.name
             );
         }
+        RebuildItemCount();
     }
 
 
@@ -775,11 +801,12 @@ public class InventoryController : MonoBehaviour
                     Debug.Log(
                         "RECIBIDO: " +
                         prefabItem.itemName +
-                        " x" +
-                        amount +
+                        " | ID: " + existingItem.ID +
                         " | TOTAL: " +
                         existingItem.quantity
                     );
+
+                    RebuildItemCount();
 
                     return true;
                 }
@@ -832,16 +859,16 @@ public class InventoryController : MonoBehaviour
                 newItemComponent.UpdateQuantityDisplay();
             }
 
-
             slot.currenItem = newItem;
-
 
             Debug.Log(
                 "RECIBIDO: " +
                 prefabItem.itemName +
-                " x" +
-                amount
+                " | ID: " + id +
+                " | Cantidad: " + amount
             );
+
+            RebuildItemCount();
 
             return true;
         }

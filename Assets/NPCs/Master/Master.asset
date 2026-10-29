@@ -21,8 +21,11 @@ MonoBehaviour:
   - 'Sabia que podia contar contigo '
   - Ahh bueno
   - 'tal vez la proxima '
-  autoProgressLines: 010100000101
-  endDialogueLine: 000000010001
+  - 'Estoy de resaca, trame las pociones '
+  - 'Uhh gracias capo '
+  - el puerco las vende, si tenes monedas
+  autoProgressLines: 010100000101000100
+  endDialogueLine: 000000010001010001
   autoProgressDelay: 1.5
   tipingSpeed: 0.05
   dialogueChoices:
@@ -31,5 +34,10 @@ MonoBehaviour:
     - Si
     - No
     nextDialogueIndex: 0200000004000000
+    choiceTypes: 
+    givesQuest: 0100
+  questInProgressIndex: 6
+  questCompletedIndex: 7
+  quest: {fileID: 11400000, guid: ec8d41ce0343d184abe82d25da777f8c, type: 2}
   voiceSound: {fileID: 8300000, guid: 4799e3c145fa5034c824e8501f1c82b3, type: 3}
   voicePitch: 1

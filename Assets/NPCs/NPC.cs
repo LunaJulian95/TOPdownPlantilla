@@ -13,12 +13,19 @@ public class NPC : MonoBehaviour, Iinteractable
     private bool isTipyng;
     private bool isDialogueActive;
 
+    private enum QuestState
+    {
+        NotStarted,
+        InProgress,
+        Completed
+    }
+
+    private QuestState questState = QuestState.NotStarted;
 
     public bool CanInteract()
     {
         return !isDialogueActive;
     }
-
 
     public void Interact()
     {
@@ -38,11 +45,36 @@ public class NPC : MonoBehaviour, Iinteractable
         }
     }
 
-
     private void StartDialogue()
     {
+        SyncQuestState();
+
+        if (questState == QuestState.NotStarted)
+        {
+            dialogueIndex = 0;
+        }
+        else if (questState == QuestState.InProgress)
+        {
+            dialogueIndex = dialogueData.questInProgressIndex;
+        }
+        else if (questState == QuestState.Completed)
+        {
+            dialogueIndex = dialogueData.questCompletedIndex;
+        }
+
+        // Validar el índice inicial.
+        if (dialogueIndex < 0 ||
+            dialogueIndex >= dialogueData.dialogueLines.Length)
+        {
+            Debug.LogWarning(
+                "El índice inicial del diálogo no es válido en " +
+                gameObject.name
+            );
+
+            return;
+        }
+
         isDialogueActive = true;
-        dialogueIndex = 0;
 
         DialogueController.Instance.npc = this;
 
@@ -58,11 +90,31 @@ public class NPC : MonoBehaviour, Iinteractable
         DisplayCurrentLine();
     }
 
+    private void SyncQuestState()
+    {
+        if (dialogueData.quest == null ||
+            QuestController.Instance == null)
+        {
+            questState = QuestState.NotStarted;
+            return;
+        }
+
+        string questID = dialogueData.quest.questID;
+
+        if (QuestController.Instance.IsQuestActive(questID))
+        {
+            questState = QuestState.InProgress;
+        }
+        else
+        {
+            questState = QuestState.NotStarted;
+        }
+    }
 
     private void NextLine()
     {
-        // Si la línea todavía se está escribiendo,
-        // mostramos inmediatamente la línea completa.
+        // Si el texto todavía se está escribiendo,
+        // mostrar la línea completa inmediatamente.
         if (isTipyng)
         {
             StopAllCoroutines();
@@ -75,30 +127,31 @@ public class NPC : MonoBehaviour, Iinteractable
             return;
         }
 
-
         DialogueController.Instance.ClearChoices();
 
-
         // Comprobar si esta línea termina el diálogo.
-        if (dialogueData.endDialogueLine.Length > dialogueIndex &&
+        if (dialogueData.endDialogueLine != null &&
+            dialogueData.endDialogueLine.Length > dialogueIndex &&
             dialogueData.endDialogueLine[dialogueIndex])
         {
             EndDialogue();
             return;
         }
 
-
-        // Buscar si esta línea tiene opciones.
-        foreach (DialogueChoice dialogueChoice
-                 in dialogueData.dialogueChoices)
+        // Buscar opciones asociadas a esta línea.
+        if (dialogueData.dialogueChoices != null)
         {
-            if (dialogueChoice.dialogueIndex == dialogueIndex)
+            foreach (DialogueChoice dialogueChoice
+                     in dialogueData.dialogueChoices)
             {
-                DisplayChoices(dialogueChoice);
-                return;
+                if (dialogueChoice != null &&
+                    dialogueChoice.dialogueIndex == dialogueIndex)
+                {
+                    DisplayChoices(dialogueChoice);
+                    return;
+                }
             }
         }
-
 
         // Pasar a la siguiente línea.
         dialogueIndex++;
@@ -112,7 +165,6 @@ public class NPC : MonoBehaviour, Iinteractable
             EndDialogue();
         }
     }
-
 
     private void DisplayChoices(DialogueChoice choice)
     {
@@ -132,7 +184,6 @@ public class NPC : MonoBehaviour, Iinteractable
                 choiceType = choice.choiceTypes[i];
             }
 
-
             int nextIndex = -1;
 
             if (choice.nextDialogueIndex != null &&
@@ -141,6 +192,11 @@ public class NPC : MonoBehaviour, Iinteractable
                 nextIndex = choice.nextDialogueIndex[i];
             }
 
+            // Comprobar de forma segura si la opción entrega una misión.
+            bool givesQuest =
+                choice.givesQuest != null &&
+                i < choice.givesQuest.Length &&
+                choice.givesQuest[i];
 
             switch (choiceType)
             {
@@ -148,11 +204,10 @@ public class NPC : MonoBehaviour, Iinteractable
 
                     DialogueController.Instance.CreatreChoiceButton(
                         choiceText,
-                        () => ChooseChoice(nextIndex)
+                        () => ChooseChoice(nextIndex, givesQuest)
                     );
 
                     break;
-
 
                 case DialogueChoice.ChoiceType.Buy:
 
@@ -163,7 +218,6 @@ public class NPC : MonoBehaviour, Iinteractable
 
                     break;
 
-
                 case DialogueChoice.ChoiceType.Sell:
 
                     DialogueController.Instance.CreatreChoiceButton(
@@ -172,7 +226,6 @@ public class NPC : MonoBehaviour, Iinteractable
                     );
 
                     break;
-
 
                 case DialogueChoice.ChoiceType.Exit:
 
@@ -186,19 +239,44 @@ public class NPC : MonoBehaviour, Iinteractable
         }
     }
 
-
-    private void ChooseChoice(int nextIndex)
+    private void ChooseChoice(int nextIndex, bool givesQuest)
     {
         if (nextIndex < 0 ||
             nextIndex >= dialogueData.dialogueLines.Length)
         {
             Debug.LogWarning(
-                "El índice de diálogo no es válido: " +
-                nextIndex
+                "El índice de diálogo no es válido: " + nextIndex
             );
 
             EndDialogue();
             return;
+        }
+
+        // Aceptar la misión si la opción está configurada para ello.
+        if (givesQuest)
+        {
+            if (dialogueData.quest == null)
+            {
+                Debug.LogWarning(
+                    "La opción intenta entregar una misión, " +
+                    "pero el NPC no tiene ninguna misión asignada."
+                );
+
+                return;
+            }
+
+            if (QuestController.Instance == null)
+            {
+                Debug.LogError(
+                    "No existe un QuestController en la escena."
+                );
+
+                return;
+            }
+
+            QuestController.Instance.AcceptQuest(dialogueData.quest);
+
+            questState = QuestState.InProgress;
         }
 
         dialogueIndex = nextIndex;
@@ -208,13 +286,20 @@ public class NPC : MonoBehaviour, Iinteractable
         DisplayCurrentLine();
     }
 
-
     public void DisplayCurrentLine()
     {
+        if (dialogueData == null ||
+            dialogueData.dialogueLines == null ||
+            dialogueIndex < 0 ||
+            dialogueIndex >= dialogueData.dialogueLines.Length)
+        {
+            EndDialogue();
+            return;
+        }
+
         StopAllCoroutines();
         StartCoroutine(TypeLine());
     }
-
 
     public void EndDialogue()
     {
@@ -223,17 +308,19 @@ public class NPC : MonoBehaviour, Iinteractable
         isTipyng = false;
         isDialogueActive = false;
 
-        DialogueController.Instance.ClearChoices();
+        if (DialogueController.Instance != null)
+        {
+            DialogueController.Instance.ClearChoices();
 
-        DialogueController.Instance.npc = null;
+            DialogueController.Instance.npc = null;
 
-        DialogueController.Instance.SetDialogueText();
+            DialogueController.Instance.SetDialogueText();
 
-        DialogueController.Instance.ShowDailogueUI(false);
+            DialogueController.Instance.ShowDailogueUI(false);
+        }
 
         PauseController.SetPause(false);
     }
-
 
     // =========================================================
     // COMERCIO
@@ -265,12 +352,12 @@ public class NPC : MonoBehaviour, Iinteractable
                 "No existe un ShopController en la escena."
             );
 
+            PauseController.SetPause(false);
             return;
         }
 
         ShopController.Instance.OpenShop(merchant);
     }
-
 
     public void OpenShopSell()
     {
@@ -298,6 +385,7 @@ public class NPC : MonoBehaviour, Iinteractable
                 "No existe un ShopController en la escena."
             );
 
+            PauseController.SetPause(false);
             return;
         }
 
@@ -305,7 +393,6 @@ public class NPC : MonoBehaviour, Iinteractable
 
         ShopController.Instance.ShowSellPanel();
     }
-
 
     public void CloseShop()
     {
@@ -317,7 +404,6 @@ public class NPC : MonoBehaviour, Iinteractable
         PauseController.SetPause(false);
     }
 
-
     // =========================================================
     // TYPING
     // =========================================================
@@ -327,7 +413,6 @@ public class NPC : MonoBehaviour, Iinteractable
         isTipyng = true;
 
         DialogueController.Instance.SetDialogueText();
-
 
         foreach (char c in dialogueData.dialogueLines[dialogueIndex])
         {
@@ -346,12 +431,11 @@ public class NPC : MonoBehaviour, Iinteractable
             );
         }
 
-
         isTipyng = false;
 
-
-        // Auto avanzar.
-        if (dialogueData.autoProgressLines.Length > dialogueIndex &&
+        // Avanzar automáticamente si la línea lo permite.
+        if (dialogueData.autoProgressLines != null &&
+            dialogueData.autoProgressLines.Length > dialogueIndex &&
             dialogueData.autoProgressLines[dialogueIndex])
         {
             yield return new WaitForSeconds(

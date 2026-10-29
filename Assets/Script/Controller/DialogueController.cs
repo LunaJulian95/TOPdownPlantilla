@@ -17,6 +17,7 @@ public class DialogueController : MonoBehaviour
     [SerializeField] private GameObject choiceButtonPrefab;
 
     public NPC npc;
+    private NPCPatrol currentPatrol;
 
 
     private void Awake()
@@ -37,9 +38,25 @@ public class DialogueController : MonoBehaviour
 
     public void ShowDailogueUI(bool show)
     {
+        if (show)
+        {
+            if (npc != null)
+                currentPatrol = npc.GetComponent<NPCPatrol>();
+
+            if (currentPatrol != null)
+                currentPatrol.IniciarDialogo();
+        }
+        else
+        {
+            if (currentPatrol != null)
+            {
+                currentPatrol.TerminarDialogo();
+                currentPatrol = null;
+            }
+        }
+
         dialoguePanel.SetActive(show);
     }
-
 
     /// <summary>
     /// añadimos nombre y imagen al panel
@@ -86,6 +103,12 @@ public class DialogueController : MonoBehaviour
 
     public void EndDialogue()
     {
+        if (npc == null)
+        {
+            Debug.LogWarning("DialogueController: no hay un NPC asignado.");
+            return;
+        }
+
         npc.EndDialogue();
     }
 
