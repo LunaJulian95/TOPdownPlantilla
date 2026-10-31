@@ -11,6 +11,7 @@ public class Quest : ScriptableObject
     public string questName;
     public string description;
     public List<QuestObjetive> objetives;
+    public List<QuestReward> questRewards;
 
     private void OnValidate()
     {
@@ -69,3 +70,13 @@ public class Quest : ScriptableObject
 
 
 }
+
+[System.Serializable]
+public class QuestReward
+{
+    public RewardType type;
+    public int rewardID; //itemID etc
+    public int amount = 1;
+}
+
+public enum RewardType { Item,Gold,Experience,Custom}

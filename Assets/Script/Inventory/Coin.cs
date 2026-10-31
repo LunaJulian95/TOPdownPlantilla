@@ -1,16 +1,27 @@
+
 using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
     public int value = 1;
 
-    void OnTriggerEnter2D(Collider2D other)
+    private bool collected = false;
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (collected || !other.CompareTag("Player"))
+            return;
+
+        if (GameManager.Instance == null)
         {
-            // Acá sumas al GameManager
-            GameManager.Instance.AddCoins(value);
-            Destroy(gameObject);
+            Debug.LogError("No existe un GameManager en la escena.");
+            return;
         }
+
+        collected = true;
+
+        GameManager.Instance.AddCoins(value);
+
+        Destroy(gameObject);
     }
 }

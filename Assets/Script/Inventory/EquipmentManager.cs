@@ -10,6 +10,7 @@ public class EquipmentManager : MonoBehaviour
     public Item currentWeapon;
     public Item currentArmor;
     public Item currentShield;
+    private int appliedArmorHealthBonus = 0;
 
 
     // =====================================================
@@ -301,77 +302,52 @@ public class EquipmentManager : MonoBehaviour
 
     public void RecalculateHealth()
     {
-        Health health =
-            GetPlayerHealth();
-
+        Health health = GetPlayerHealth();
 
         if (health == null)
+        {
+            Debug.LogWarning("No se encontró Health del jugador.");
             return;
+        }
 
+        // Recuperar la vida base quitando
+        // el bonus de la armadura anterior.
+        int baseHealth = health.maxHealth - appliedArmorHealthBonus;
 
-        int baseHealth =
-            health.maxHealth;
+        // Obtener bonus de la nueva armadura.
+        int newArmorBonus = 0;
 
-
-        // Quitar bonus de armadura anterior
         if (currentArmor != null)
         {
-            baseHealth -=
-                currentArmor.healthBonus;
+            newArmorBonus = currentArmor.healthBonus;
         }
 
+        // Calcular diferencia entre armaduras.
+        int bonusDifference = newArmorBonus - appliedArmorHealthBonus;
 
-        if (baseHealth < 1)
-        {
-            baseHealth = 1;
-        }
+        // Aplicar nueva vida máxima.
+        health.maxHealth = Mathf.Max(1, baseHealth + newArmorBonus);
 
+        // Aumentar o reducir la vida actual según el cambio.
+        health.currentHealth += bonusDifference;
 
-        int oldMaxHealth =
-            health.maxHealth;
+        // Evitar valores fuera de rango.
+        health.currentHealth = Mathf.Clamp(
+            health.currentHealth,
+            0,
+            health.maxHealth
+        );
 
-
-        health.maxHealth =
-            baseHealth;
-
-
-        // Aplicar nueva armadura
-        if (currentArmor != null)
-        {
-            health.maxHealth +=
-                currentArmor.healthBonus;
-        }
-
-
-        // Mantener proporción de vida
-        if (oldMaxHealth > 0)
-        {
-            float healthPercent =
-                (float)health.currentHealth /
-                oldMaxHealth;
-
-
-            health.currentHealth =
-                Mathf.RoundToInt(
-                    health.maxHealth *
-                    healthPercent
-                );
-        }
-
-
-        if (health.currentHealth >
-            health.maxHealth)
-        {
-            health.currentHealth =
-                health.maxHealth;
-        }
-
+        // Registrar el bonus aplicado.
+        appliedArmorHealthBonus = newArmorBonus;
 
         Debug.Log(
-            "Vida recalculada: " +
-            health.currentHealth +
-            "/" +
-            health.maxHealth
+            "========== VIDA RECALCULADA ==========" +
+            "\nVida base: " + baseHealth +
+            "\nBonus armadura: +" + newArmorBonus +
+            "\nVida máxima: " + health.maxHealth +
+            "\nVida actual: " + health.currentHealth +
+            "\n======================================"
         );
     }
 }

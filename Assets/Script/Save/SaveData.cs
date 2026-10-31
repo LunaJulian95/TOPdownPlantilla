@@ -15,6 +15,7 @@ public class SaveData
 
     // Progreso de las misiones.
     public List<QuestProgressSaveData> questProgressData;
+    public List<string> handinQuestIDs;
 
     public int playerLevel;
     public int playerXP;

@@ -97,4 +97,12 @@ public class PlayerMovement : MonoBehaviour
         SoundEffectManager.Instance.Play(FOOTSTEP_SOUND_NAME, true);
     }
 
+    public Vector2 GetLastMoveDirection()
+    {
+        if (LastMoveInput == Vector2.zero)
+            return Vector2.down;
+
+        return LastMoveInput;
+    }
+
 }

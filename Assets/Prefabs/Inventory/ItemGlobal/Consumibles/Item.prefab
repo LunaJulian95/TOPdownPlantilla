@@ -109,6 +109,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDragHandler
   minDropDistance: 2
   maxDropDistance: 3
+  radiusOverlap: 0.5
 --- !u!114 &-8788994025654646732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,6 +131,14 @@ MonoBehaviour:
   damageBonusSecondary: 5
   healAmount: 25
   worldPrefab: {fileID: 3103095889721010616}
+  isStackable: 1
+  maxStackSize: 99
+  quantity: 1
+  projectilePrefab: {fileID: 0}
+  projectileSpeed: 8
+  attackType: 0
+  areaRadius: 1.5
+  areaEffectPrefab: {fileID: 0}
   originalParent: {fileID: 0}
 --- !u!212 &-7061967823216432370
 SpriteRenderer:

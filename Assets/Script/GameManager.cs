@@ -1,20 +1,55 @@
 using UnityEngine;
-using TMPro; // Para mostrar texto
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
-    public int coins = 0;
-    public TextMeshProUGUI coinsText; // Arrastra tu texto de UI acá
 
-    void Awake()
+    [Header("Monedas")]
+    public int coins = 0;
+
+    [Header("Interfaz")]
+    public TextMeshProUGUI coinsText;
+
+    private void Awake()
     {
-        Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        UpdateCoinsUI();
     }
 
     public void AddCoins(int amount)
     {
+        if (amount <= 0) return;
+
         coins += amount;
-        coinsText.text = "Monedas: " + coins;
+        UpdateCoinsUI();
+
+        Debug.Log("Monedas actuales: " + coins);
+    }
+
+    public bool SpendCoins(int amount)
+    {
+        if (amount <= 0 || coins < amount)
+            return false;
+
+        coins -= amount;
+        UpdateCoinsUI();
+
+        return true;
+    }
+
+    private void UpdateCoinsUI()
+    {
+        if (coinsText != null)
+            coinsText.text = "Monedas: " + coins;
     }
 }

@@ -12,6 +12,9 @@ public class QuestController : MonoBehaviour
     private QuestUI questUI;
     private InventoryController inventory;
     public List<Quest> allQuests = new List<Quest>();
+
+    public List<string> handinQuestIDs =new();
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -160,6 +163,70 @@ public class QuestController : MonoBehaviour
             Debug.LogWarning(
                 "QuestController: no se encontró QuestUI."
             );
+    }
+
+
+    public bool IsQuestCompleted(string questID)
+    {
+        QuestProgress quest = activeQuest.Find(q =>q.QuestID == questID);
+        return quest != null && quest.objetives.TrueForAll(o => o.IsCompleted);
+    }
+
+    public void HandInQuest (string questID)
+    {
+        //Try remove required item 
+        if (!RemoveRequiredItemsFromInventory(questID))
+        {
+            return;
+        }
+
+
+        //Remove quest from quest log
+        QuestProgress quest = activeQuest.Find(q => q.QuestID == questID);
+        if(quest != null)
+        {
+            handinQuestIDs.Add(questID);
+            activeQuest.Remove(quest);
+            questUI.UpdateQuestUI();
+        }
+    }
+
+
+    public bool IsQuestHandedIn(string questID)
+    {
+        return handinQuestIDs.Contains(questID);
+    }
+
+    public bool RemoveRequiredItemsFromInventory(string questID)
+    {
+        QuestProgress quest = activeQuest.Find(q => q.QuestID == questID);
+        if (quest == null) return false;
+
+        Dictionary<int, int> requiredItems = new();
+
+        foreach(QuestObjetive objetive in quest.objetives)
+        {
+            if(objetive.type == ObjectiveType.Collection && int.TryParse(objetive.objetiveID, out int itemID))
+            {
+                requiredItems[itemID] = objetive.requiredAmount;
+            }
+        }
+
+        Dictionary<int, int> itemCounts = InventoryController.Instance.GetItemCount();
+        foreach(var item in requiredItems)
+        {
+            if (itemCounts.GetValueOrDefault(item.Key) < item.Value)
+            {
+                return false;
+            }
+        }
+
+        foreach (var itemRequired in requiredItems)
+        {
+            InventoryController.Instance.RemoveItemFromInventory(itemRequired.Key, itemRequired.Value);
+        }
+
+        return true;
     }
 
     public void LoadQuestProgress(List<QuestProgress> saveQuests)

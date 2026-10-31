@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1f3b72c6e4019445a5cc96d8fc3fea2, type: 3}
+  m_Name: Knight
+  m_EditorClassIdentifier: Assembly-CSharp::NPCDialogue
+  npcName: knightCommander
+  npcPortrait: {fileID: -7527145504033472756, guid: bf4880cf09f5bf4428539ceb10685e33, type: 3}
+  dialogueLines:
+  - "Buenos Dias! soy el comandante de esta peque\xF1a ciudad"
+  - estas buscando trabajo?
+  - perfecto, necesito que cazes ciertos monstruos
+  - Sigue tu camino entonces novato
+  autoProgressLines: 
+  endDialogueLine: 00000000
+  autoProgressDelay: 1.5
+  tipingSpeed: 0.05
+  dialogueChoices:
+  - dialogueIndex: 1
+    dialogueChoices:
+    - si necesito entrenar
+    - no puedo
+    nextDialogueIndex: 0200000003000000
+    choiceTypes: 
+    givesQuest: 
+  questInProgressIndex: 0
+  questCompletedIndex: 0
+  quest: {fileID: 0}
+  voiceSound: {fileID: 8300000, guid: a1591e2d092d9da4ab87aa0dc8ba9776, type: 3}
+  voicePitch: 1

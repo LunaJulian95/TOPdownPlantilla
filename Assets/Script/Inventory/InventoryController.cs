@@ -734,61 +734,52 @@ public class InventoryController : MonoBehaviour
 
         return item;
     }
+
     public bool AddWorldItemByID(int id, int amount)
     {
         if (amount < 1)
             amount = 1;
 
-
-        // =====================================================
-        // BUSCAR EL PREFAB ORIGINAL
-        // =====================================================
-
-        GameObject itemPrefab = null;
-
-        foreach (GameObject prefab in itemPrefabs)
+        // BUSCAR EL DICCIONARIO
+        if (itemDictionary == null)
         {
-            if (prefab == null)
-                continue;
-
-            Item item = prefab.GetComponent<Item>();
-
-            if (item != null && item.ID == id)
-            {
-                itemPrefab = prefab;
-                break;
-            }
+            itemDictionary = FindAnyObjectByType<ItemDiccionary>();
         }
 
-        if (itemPrefab == null)
+        if (itemDictionary == null)
         {
-            Debug.LogError(
-                "No se encontró prefab con ID: " + id
-            );
-
+            Debug.LogError("No se encontró ItemDiccionary.");
             return false;
         }
 
+        // BUSCAR PREFAB POR ID
+        GameObject itemPrefab = itemDictionary.GetItemPrefab(id);
+
+        if (itemPrefab == null)
+        {
+            Debug.LogError("No existe prefab para ID: " + id);
+            return false;
+        }
 
         Item prefabItem = itemPrefab.GetComponent<Item>();
 
+        if (prefabItem == null)
+        {
+            Debug.LogError("El prefab no tiene componente Item: " + itemPrefab.name);
+            return false;
+        }
 
-        // =====================================================
-        // CONSUMIBLE → BUSCAR STACK
-        // =====================================================
-
+        // CONSUMIBLES: BUSCAR STACK
         if (prefabItem.itemType == Item.ItemType.Consumable)
         {
             foreach (Transform slotTransform in inventoryPanel.transform)
             {
-                Slot slot =
-                    slotTransform.GetComponent<Slot>();
+                Slot slot = slotTransform.GetComponent<Slot>();
 
                 if (slot == null || slot.currenItem == null)
                     continue;
 
-                Item existingItem =
-                    slot.currenItem.GetComponent<Item>();
+                Item existingItem = slot.currenItem.GetComponent<Item>();
 
                 if (existingItem == null)
                     continue;
@@ -798,45 +789,27 @@ public class InventoryController : MonoBehaviour
                 {
                     existingItem.AddToStack(amount);
 
-                    Debug.Log(
-                        "RECIBIDO: " +
-                        prefabItem.itemName +
-                        " | ID: " + existingItem.ID +
-                        " | TOTAL: " +
-                        existingItem.quantity
-                    );
+                    Debug.Log("RECIBIDO: " + prefabItem.itemName +
+                              " | ID: " + id +
+                              " | TOTAL: " + existingItem.quantity);
 
                     RebuildItemCount();
-
                     return true;
                 }
             }
         }
 
-
-        // =====================================================
         // BUSCAR SLOT VACÍO
-        // =====================================================
-
         foreach (Transform slotTransform in inventoryPanel.transform)
         {
-            Slot slot =
-                slotTransform.GetComponent<Slot>();
+            Slot slot = slotTransform.GetComponent<Slot>();
 
             if (slot == null || slot.currenItem != null)
                 continue;
 
+            GameObject newItem = Instantiate(itemPrefab, slot.transform);
 
-            // Crear solamente el item del inventario.
-            GameObject newItem =
-                Instantiate(
-                    itemPrefab,
-                    slot.transform
-                );
-
-
-            RectTransform rect =
-                newItem.GetComponent<RectTransform>();
+            RectTransform rect = newItem.GetComponent<RectTransform>();
 
             if (rect != null)
             {
@@ -845,39 +818,52 @@ public class InventoryController : MonoBehaviour
                 rect.localScale = Vector3.one;
             }
 
-
-            Item newItemComponent =
-                newItem.GetComponent<Item>();
+            Item newItemComponent = newItem.GetComponent<Item>();
 
             if (newItemComponent != null)
             {
                 newItemComponent.quantity = amount;
-
-                newItemComponent.originalParent =
-                    slot.transform;
-
+                newItemComponent.originalParent = slot.transform;
                 newItemComponent.UpdateQuantityDisplay();
             }
 
             slot.currenItem = newItem;
 
-            Debug.Log(
-                "RECIBIDO: " +
-                prefabItem.itemName +
-                " | ID: " + id +
-                " | Cantidad: " + amount
-            );
+            Debug.Log("RECIBIDO: " + prefabItem.itemName +
+                      " | ID: " + id +
+                      " | Cantidad: " + amount);
 
             RebuildItemCount();
-
             return true;
         }
 
-
         Debug.Log("Inventario lleno.");
-
         return false;
     }
+
+    public void RemoveItemFromInventory(int itemID,int amountToRemove)
+    {
+        foreach(Transform slotTransform in inventoryPanel.transform)
+        {
+            if (amountToRemove <= 0 ) break;
+
+            Slot slot = slotTransform.GetComponent<Slot>();
+            if(slot?.currenItem?.GetComponent<Item>() is Item item && item.ID == itemID)
+            {
+                int removed = Mathf.Min(amountToRemove, item.quantity);
+                item.RemoveFromStack(removed);
+                amountToRemove -= removed;
+
+                if(item.quantity == 0)
+                {
+                    Destroy(slot.currenItem);
+                    slot.currenItem = null;
+                }
+            }
+        }
+        RebuildItemCount();
+    }
+
 
 
 }

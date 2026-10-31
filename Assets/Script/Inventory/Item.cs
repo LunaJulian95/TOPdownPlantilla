@@ -1,14 +1,30 @@
+
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
-using UnityEditor.SceneManagement;
 
 public class Item : MonoBehaviour, IPointerClickHandler
 {
     public int ID;
     public string itemName;
-    public enum ItemType { Weapon, Armor, Shield, Consumable, Misc }
+
+    public enum ItemType
+    {
+        Weapon,
+        Armor,
+        Shield,
+        Consumable,
+        Misc
+    }
+
+    public enum AttackType
+    {
+        Melee,
+        Projectile,
+        Area,
+        Aura
+    }
 
     [Header("Equipable")]
     public ItemType itemType;
@@ -22,43 +38,74 @@ public class Item : MonoBehaviour, IPointerClickHandler
     public GameObject worldPrefab;
 
     [Header("Stack item")]
-    public int quantity ;
+    public bool isStackable = false;
+    public int maxStackSize = 99;
+    public int quantity = 1;
+
     private TMP_Text quantityText;
 
-    [HideInInspector] public Transform originalParent;
+    [Header("Proyectil")]
+    public GameObject projectilePrefab;
+    public float projectileSpeed = 8f;
+
+    [Header("Tipo de ataque")]
+    public AttackType attackType = AttackType.Melee;
+
+    [Header("Ataque en área")]
+    public float areaRadius = 1.5f;
+    public GameObject areaEffectPrefab;
+
+    [HideInInspector]
+    public Transform originalParent;
+
     private CanvasGroup canvasGroup;
     private RectTransform rectTransform;
 
-    void Awake()
+    private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
+
         canvasGroup = GetComponent<CanvasGroup>();
-        if (canvasGroup == null) canvasGroup = gameObject.AddComponent<CanvasGroup>();
-        if (transform.parent != transform.root) originalParent = transform.parent;
+
+        if (canvasGroup == null)
+            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
+        if (transform.parent != transform.root)
+            originalParent = transform.parent;
+
         quantityText = GetComponentInChildren<TMP_Text>();
+
         UpdateQuantityDisplay();
     }
 
+    // =====================================================
+    // STACK
+    // =====================================================
+
     public void UpdateQuantityDisplay()
     {
-        if(quantityText != null)
+        if (quantityText != null)
         {
-            quantityText.text =(quantity > 1) ? quantity.ToString() : "";
+            quantityText.text = quantity > 1
+                ? quantity.ToString()
+                : "";
         }
     }
 
     public void AddToStack(int amount = 1)
     {
-        this.quantity += amount;
-        
+        quantity += amount;
         UpdateQuantityDisplay();
     }
 
     public int RemoveFromStack(int amount = 1)
     {
-        int removed = Mathf.Min(this.quantity, amount);
-        this.quantity -= removed;
+        int removed = Mathf.Min(quantity, amount);
+
+        quantity -= removed;
+
         UpdateQuantityDisplay();
+
         return removed;
     }
 
@@ -78,72 +125,64 @@ public class Item : MonoBehaviour, IPointerClickHandler
         return clone;
     }
 
-    public virtual void PickUp()
+    // =====================================================
+    // RECOGER
+    // =====================================================
+
+    public virtual void ShowPopUp()
     {
-        Sprite sprite = GetComponent<Image>().sprite;
+        Image image = GetComponent<Image>();
+
+        if (image == null)
+            return;
+
         if (ItemPickUpUIController.Instance != null)
-            ItemPickUpUIController.Instance.ShowItemPickUp(itemName, sprite);
+        {
+            ItemPickUpUIController.Instance.ShowItemPickUp(
+                itemName,
+                image.sprite
+            );
+        }
     }
+
+    // =====================================================
+    // USAR OBJETO
+    // =====================================================
 
     public void Use()
     {
         if (itemType == ItemType.Consumable)
         {
-            // =========================================
-            // USAR UNA SOLA POCIÓN
-            // =========================================
+            Health playerHealth = null;
 
-            Health h = null;
-
-            foreach (var x in FindObjectsOfType<Health>())
+            foreach (Health health in FindObjectsOfType<Health>())
             {
-                if (x.isPlayer)
+                if (health.isPlayer)
                 {
-                    h = x;
+                    playerHealth = health;
                     break;
                 }
             }
 
-            if (h != null)
+            if (playerHealth != null)
             {
-                h.currentHealth += healAmount;
+                playerHealth.currentHealth += healAmount;
 
-                if (h.currentHealth > h.maxHealth)
-                {
-                    h.currentHealth = h.maxHealth;
-                }
+                if (playerHealth.currentHealth > playerHealth.maxHealth)
+                    playerHealth.currentHealth = playerHealth.maxHealth;
             }
-
-
-            // =========================================
-            // QUITAR 1 UNIDAD DE LA PILA
-            // =========================================
 
             RemoveFromStack(1);
 
-
-            // =========================================
-            // SI TODAVÍA QUEDAN POCIONES
-            // =========================================
-
             if (quantity > 0)
-            {
                 return;
-            }
-
-
-            // =========================================
-            // SE TERMINÓ LA PILA
-            // =========================================
 
             if (originalParent != null)
             {
-                Slot s = originalParent.GetComponent<Slot>();
+                Slot slot = originalParent.GetComponent<Slot>();
 
-                if (s != null)
-                {
-                    s.currenItem = null;
-                }
+                if (slot != null)
+                    slot.currenItem = null;
             }
 
             Destroy(gameObject);
@@ -154,53 +193,81 @@ public class Item : MonoBehaviour, IPointerClickHandler
         }
     }
 
+    // =====================================================
+    // SOLTAR OBJETO
+    // =====================================================
+
     public void Drop()
     {
-        if (EquipmentManager.Instance != null) EquipmentManager.Instance.Unequip(this);
+        if (EquipmentManager.Instance != null)
+            EquipmentManager.Instance.Unequip(this);
+
         if (originalParent != null)
         {
-            Slot s = originalParent.GetComponent<Slot>();
-            if (s != null) s.currenItem = null;
+            Slot slot = originalParent.GetComponent<Slot>();
+
+            if (slot != null)
+                slot.currenItem = null;
         }
+
         Transform player = FindAnyObjectByType<PlayerMovement>()?.transform;
-        if (player == null) player = FindAnyObjectByType<Health>()?.transform;
+
+        if (player == null)
+            player = FindAnyObjectByType<Health>()?.transform;
+
         if (player != null && worldPrefab != null)
         {
-            Vector3 dropPos = player.position + player.forward * 1.5f + Vector3.up * 0.5f;
+            Vector3 dropPos =
+                player.position +
+                player.forward * 1.5f +
+                Vector3.up * 0.5f;
+
             Instantiate(worldPrefab, dropPos, Quaternion.identity);
         }
+
         Destroy(gameObject);
     }
 
+    // =====================================================
+    // EQUIPAR
+    // =====================================================
+
     public void EquipToSlot()
     {
-        if (itemType == ItemType.Consumable) { Use(); return; }
-        if (EquipmentManager.Instance != null) EquipmentManager.Instance.Equip(this);
+        if (itemType == ItemType.Consumable)
+        {
+            Use();
+            return;
+        }
+
+        if (EquipmentManager.Instance != null)
+            EquipmentManager.Instance.Equip(this);
     }
 
+    // =====================================================
+    // CLICS DEL INVENTARIO
+    // =====================================================
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        // CLICK IZQUIERDO
         if (eventData.button == PointerEventData.InputButton.Left)
         {
             EquipToSlot();
             return;
         }
 
-        // CLICK DERECHO
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            // Solo los consumibles pueden separarse
             if (itemType == ItemType.Consumable)
-            {
                 SplitStack();
-            }
 
             return;
         }
     }
 
+    // =====================================================
+    // SEPARAR STACK
+    // =====================================================
 
     private void SplitStack()
     {
@@ -212,7 +279,6 @@ public class Item : MonoBehaviour, IPointerClickHandler
 
         int splitAmount = quantity / 2;
 
-        // Buscar primero un slot vacío
         Slot freeSlot = null;
 
         foreach (Transform slotTransform in InventoryController.Instance.inventoryPanel.transform)
@@ -226,17 +292,14 @@ public class Item : MonoBehaviour, IPointerClickHandler
             }
         }
 
-        // Si no hay espacio, no hacemos nada
         if (freeSlot == null)
         {
             Debug.Log("No hay espacio para separar el stack.");
             return;
         }
 
-        // Quitamos la mitad del stack original
         RemoveFromStack(splitAmount);
 
-        // Creamos el nuevo objeto
         GameObject newItem = CloneItem(splitAmount);
 
         if (newItem == null)
@@ -245,7 +308,6 @@ public class Item : MonoBehaviour, IPointerClickHandler
             return;
         }
 
-        // Colocamos el nuevo objeto en el slot
         newItem.transform.SetParent(freeSlot.transform, false);
 
         RectTransform rect = newItem.GetComponent<RectTransform>();
@@ -257,24 +319,11 @@ public class Item : MonoBehaviour, IPointerClickHandler
             rect.localScale = Vector3.one;
         }
 
-        // MUY IMPORTANTE:
-        // El nuevo item debe saber cuál es su slot
         Item newItemComponent = newItem.GetComponent<Item>();
 
         if (newItemComponent != null)
-        {
             newItemComponent.originalParent = freeSlot.transform;
-        }
 
-        // El slot también debe saber qué item contiene
         freeSlot.currenItem = newItem;
-
-        Debug.Log(
-            "Stack separado: " +
-            quantity +
-            " + " +
-            splitAmount
-        );
     }
-
 }

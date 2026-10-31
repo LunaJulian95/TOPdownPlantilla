@@ -360,9 +360,12 @@ public class SaveController : MonoBehaviour
                 chestSaveData =
                     GetChestsState(),
                 questProgressData =
-              QuestController.Instance != null
-            ? QuestController.Instance.GetQuestProgressForSave()
-            : new List<QuestProgressSaveData>() 
+                QuestController.Instance != null
+                ? QuestController.Instance.GetQuestProgressForSave()
+                : new List<QuestProgressSaveData>(),
+                handinQuestIDs = QuestController.Instance.handinQuestIDs
+
+
 
 
             };
@@ -565,6 +568,8 @@ public class SaveController : MonoBehaviour
             QuestController.Instance.LoadQuestProgress(
                 data.questProgressData
             );
+
+            QuestController.Instance.handinQuestIDs = data.handinQuestIDs;
         }
 
         // -----------------------------------------------------

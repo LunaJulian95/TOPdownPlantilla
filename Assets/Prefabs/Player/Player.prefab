@@ -137,6 +137,37 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!1 &2551508770311206900
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7334267307755761683}
+  m_Layer: 8
+  m_Name: FirePoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7334267307755761683
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2551508770311206900}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2513890994363800255}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4288343385733928468
 GameObject:
   m_ObjectHideFlags: 0
@@ -469,6 +500,8 @@ Transform:
   - {fileID: 7418338951388139325}
   - {fileID: 4830356380124949959}
   - {fileID: 3267208850326193164}
+  - {fileID: 7334267307755761683}
+  - {fileID: 505087743519164693}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4092823620948744894
@@ -520,7 +553,7 @@ SpriteRenderer:
   m_SortingLayer: 4
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 4035959289877228764, guid: 2ab313a5c1a6f3d4fb6f08c0e5329dda, type: 3}
+  m_Sprite: {fileID: -6329420634031446844, guid: ccde5bd0096d69143ac8113799812f08, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -574,6 +607,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveSpeed: 15
   footStepSpeed: 0.5
+  player_combat: {fileID: 0}
 --- !u!50 &2904669329005399250
 Rigidbody2D:
   serializedVersion: 5
@@ -704,6 +738,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   attackCooldown: 0.4
+  animator: {fileID: 2471454604935767577}
+  firePoint: {fileID: 7334267307755761683}
+  areaRadius: 1.5
+  areaEffectPrefab: {fileID: 9007480455729906167}
+  auraRadius: 1.5
+  auraDamageInterval: 1
+  auraEffectPrefab: {fileID: 9007480455729906167}
 --- !u!114 &566797310398203601
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -774,10 +815,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8b1ae4e4e52b34ea557c1c11e076fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.2D.Animation.Runtime::UnityEngine.U2D.Animation.SpriteResolver
-  m_CategoryHash: 1.8625731e-11
-  m_labelHash: 2.6263963e-13
+  m_CategoryHash: 5.3827043e-31
+  m_labelHash: 5.2204646e-37
   m_SpriteKey: 0
-  m_SpriteHash: 1027422969
+  m_SpriteHash: 650928937
 --- !u!1 &6714883728346793526
 GameObject:
   m_ObjectHideFlags: 0
@@ -881,7 +922,7 @@ Transform:
   m_GameObject: {fileID: 7690363391907314210}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.58, y: -0.25, z: 0}
+  m_LocalPosition: {x: 0.89, y: -0.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1199,3 +1240,34 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!1 &9007480455729906167
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 505087743519164693}
+  m_Layer: 8
+  m_Name: AuraPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &505087743519164693
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9007480455729906167}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2513890994363800255}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

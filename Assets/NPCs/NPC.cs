@@ -101,7 +101,12 @@ public class NPC : MonoBehaviour, Iinteractable
 
         string questID = dialogueData.quest.questID;
 
-        if (QuestController.Instance.IsQuestActive(questID))
+        if (QuestController.Instance.IsQuestCompleted(questID) ||QuestController.Instance.IsQuestHandedIn(questID))
+        {
+            questState = QuestState.Completed;
+        }
+
+         else if (QuestController.Instance.IsQuestActive(questID))
         {
             questState = QuestState.InProgress;
         }
@@ -303,6 +308,25 @@ public class NPC : MonoBehaviour, Iinteractable
 
     public void EndDialogue()
     {
+        if (dialogueData != null &&
+            dialogueData.quest != null &&
+            questState == QuestState.Completed)
+        {
+            if (QuestController.Instance == null)
+            {
+                Debug.LogError("No existe QuestController en la escena.");
+            }
+            else
+            {
+                string questID = dialogueData.quest.questID;
+
+                if (!QuestController.Instance.IsQuestHandedIn(questID))
+                {
+                    HandleQuestCompletion(dialogueData.quest);
+                }
+            }
+        }
+
         StopAllCoroutines();
 
         isTipyng = false;
@@ -311,15 +335,43 @@ public class NPC : MonoBehaviour, Iinteractable
         if (DialogueController.Instance != null)
         {
             DialogueController.Instance.ClearChoices();
-
             DialogueController.Instance.npc = null;
-
             DialogueController.Instance.SetDialogueText();
-
             DialogueController.Instance.ShowDailogueUI(false);
         }
 
         PauseController.SetPause(false);
+    }
+
+    private void HandleQuestCompletion(Quest quest)
+    {
+        if (quest == null)
+        {
+            Debug.LogError("No se puede entregar una recompensa: Quest es null.");
+            return;
+        }
+
+        if (RewardsController.Instance == null)
+        {
+            Debug.LogError(
+                "No existe RewardsController en la escena. " +
+                "No se pudo entregar la recompensa de: " + quest.questID
+            );
+
+            return;
+        }
+
+        if (QuestController.Instance == null)
+        {
+            Debug.LogError("No existe QuestController en la escena.");
+            return;
+        }
+
+        RewardsController.Instance.GiveQuestReward(quest);
+
+        QuestController.Instance.HandInQuest(quest.questID);
+
+        Debug.Log("Misión entregada correctamente: " + quest.questID);
     }
 
     // =========================================================

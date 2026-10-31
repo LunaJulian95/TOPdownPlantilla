@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 1446677414308368158}
   - component: {fileID: 5013433264208366724}
   - component: {fileID: 6581280316390495583}
+  - component: {fileID: 990135263212026305}
   m_Layer: 0
   m_Name: Palo
   m_TagString: item
@@ -105,6 +106,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11cf425a60cb1624f9005799eb5d3b6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemDragHandler
+  minDropDistance: 2
+  maxDropDistance: 3
+  radiusOverlap: 0.5
 --- !u!114 &9121606507097777797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,6 +130,13 @@ MonoBehaviour:
   damageBonusSecondary: 5
   healAmount: 25
   worldPrefab: {fileID: 989148611326156356}
+  quantity: 0
+  projectilePrefab: {fileID: 2933482858970218495, guid: aa1398469b102014a8b7ff307ef90403, type: 3}
+  projectileSpeed: 4
+  attackType: 1
+  areaRadius: 1.5
+  areaEffectPrefab: {fileID: 3598085490898557299, guid: dcdd08e73f62dc34fbba7c8e02e53942, type: 3}
+  originalParent: {fileID: 0}
 --- !u!212 &1446677414308368158
 SpriteRenderer:
   serializedVersion: 2
@@ -250,3 +261,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!114 &990135263212026305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 989148611326156356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7604bbe6bbc769144a5aa70199480f80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BounceEffect
+  bounceHeigth: 0.3
+  bounceDuration: 0.4
+  bounceCount: 2

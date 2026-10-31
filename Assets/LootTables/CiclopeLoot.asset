@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CiclopeLoot
   m_EditorClassIdentifier: Assembly-CSharp::LootTable
   lootEntries:
-  - itemPrefab: {fileID: 8636285530817145510, guid: 025d01c965e870c4986148557ef965ee, type: 3}
+  - itemPrefab: {fileID: 4195511242825984396, guid: ec93edfa20f40db4aacaa6bc1efaf254, type: 3}
     dropChance: 77.6
     minAmount: 1
     maxAmount: 5
