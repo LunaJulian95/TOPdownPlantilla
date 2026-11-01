@@ -1,62 +1,112 @@
+
 using UnityEngine;
 using Unity.Cinemachine;
+using System.Threading.Tasks;
 
 public class MapTransitions : MonoBehaviour
 {
-
+    [Header("Mapa")]
     [SerializeField] private PolygonCollider2D mapBoundary;
-    CinemachineConfiner2D confiner;
 
-    enum Direction
+    private CinemachineConfiner2D confiner;
+
+    private enum Direction
     {
         Up,
         Down,
         Left,
-        Right
+        Right,
+        Teleport
     }
-    [SerializeField] Direction direction;
 
-    [SerializeField][Range(0,5)] float amountToMove;
+    [Header("Transición")]
+    [SerializeField] private Direction direction;
+    [SerializeField] private Transform teleportTargetPosition;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField, Range(0, 5)]
+    private float amountToMove = 5f;
+
+    private bool isTransitioning = false;
+
+    private void Start()
     {
         confiner = FindAnyObjectByType<CinemachineConfiner2D>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.CompareTag("Player"))
+        if (!collision.CompareTag("Player"))
+            return;
+
+        if (isTransitioning)
+            return;
+
+        FadeTransition(collision.gameObject);
+
+        if (SoundMusicManager.Instance != null)
+            SoundMusicManager.Instance.PlayMusicWithCrossFade(mapBoundary.name);
+
+        MapControllerManual.Instance?.HigtligthArea(mapBoundary.name);
+        MapControllerDynamic.Instance?.UpdateCurrentArea(mapBoundary.name);
+    }
+
+    private async void FadeTransition(GameObject player)
+    {
+
+        isTransitioning = true;
+
+        await ScreenFader.Instance.FadeOut();
+
+        // Cambiar el límite de la cámara.
+        if (confiner != null && mapBoundary != null)
         {
             confiner.BoundingShape2D = mapBoundary;
-            UpdatePlayerPosition(collision.gameObject);
-            SoundMusicManager.Instance.PlayMusicWithCrossFade(mapBoundary.name);    
-
-            MapControllerManual.Instance?.HigtligthArea(mapBoundary.name);
-            MapControllerDynamic.Instance?.UpdateCurrentArea(mapBoundary.name);
+            confiner.InvalidateBoundingShapeCache();
         }
+
+        // Mover al jugador.
+        UpdatePlayerPosition(player);
+
+        // Esperar a que Cinemachine actualice la cámara.
+        await Task.Yield();
+        await Task.Yield();
+
+        await ScreenFader.Instance.FadeIn();
+
+        isTransitioning = false;
     }
 
-    void UpdatePlayerPosition(GameObject player) 
+    private void UpdatePlayerPosition(GameObject player)
     {
-        Vector3 newposition = player.transform.position;
-        switch (this.direction) 
+        if (direction == Direction.Teleport)
+        {
+            if (teleportTargetPosition != null)
+                player.transform.position = teleportTargetPosition.position;
+
+            return;
+        }
+
+        Vector3 newPosition = player.transform.position;
+
+        switch (direction)
         {
             case Direction.Up:
-                newposition += Vector3.up * 5f;
+                newPosition += Vector3.up * amountToMove;
                 break;
+
             case Direction.Down:
-                newposition += Vector3.down * 5f;
+                newPosition += Vector3.down * amountToMove;
                 break;
+
             case Direction.Left:
-                newposition += Vector3.left * 5f;
+                newPosition += Vector3.left * amountToMove;
                 break;
+
             case Direction.Right:
-                newposition += Vector3.right * 5f;
+                newPosition += Vector3.right * amountToMove;
                 break;
         }
+
+        player.transform.position = newPosition;
     }
-    
-
-
 }

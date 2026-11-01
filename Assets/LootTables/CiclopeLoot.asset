@@ -18,11 +18,11 @@ MonoBehaviour:
     minAmount: 1
     maxAmount: 5
   - itemPrefab: {fileID: 3103095889721010616, guid: cde84ef5f1314ff4e8ff6e1c5e364f0a, type: 3}
-    dropChance: 5
+    dropChance: 15
     minAmount: 0
     maxAmount: 1
   - itemPrefab: {fileID: 739316359890200783, guid: 6bc27ff2605beec4a89ae3913b76ef72, type: 3}
-    dropChance: 4.6
+    dropChance: 15
     minAmount: 0
     maxAmount: 1
   - itemPrefab: {fileID: 1843356126280632827, guid: c0e6e93d2c07e3e4c97163fa4b5edad1, type: 3}

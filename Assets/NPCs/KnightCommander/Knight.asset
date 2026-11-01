@@ -20,7 +20,7 @@ MonoBehaviour:
   - perfecto, necesito que cazes ciertos monstruos
   - Sigue tu camino entonces novato
   autoProgressLines: 
-  endDialogueLine: 00000000
+  endDialogueLine: 00000100
   autoProgressDelay: 1.5
   tipingSpeed: 0.05
   dialogueChoices:

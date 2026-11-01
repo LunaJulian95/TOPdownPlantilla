@@ -55,7 +55,7 @@ public class Merchant : MonoBehaviour
             return false;
         }
 
-        // Primero intentamos meter el objeto
+        // Comprobar espacio en inventario.
         bool added = InventoryController.Instance.AddItemByID(itemID);
 
         if (!added)
@@ -64,8 +64,14 @@ public class Merchant : MonoBehaviour
             return false;
         }
 
-        // Solo cobramos si realmente se agregó
-        GameManager.Instance.AddCoins(-shopItem.buyPrice);
+        // Descontar monedas.
+        bool paid = GameManager.Instance.SpendCoins(shopItem.buyPrice);
+
+        if (!paid)
+        {
+            Debug.LogError("No se pudo realizar el pago.");
+            return false;
+        }
 
         Debug.Log(
             "Compraste " +
